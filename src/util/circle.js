@@ -32,4 +32,21 @@ Circle.prototype = {
         
     return edges <= this.rSquared;
   },
+
+  show(sketch, num) {
+    let color
+    if (num > 3) {
+      color = 'rgba(255,0,0,0.05)';
+    } else if (num > 2) {
+      color = 'rgba(0,255,255,0.05)'
+    } else if (num > 1) {
+      color = 'rgba(0,255,0,0.05)';
+    } else {
+      color = 'rgba(0,0,255,0.05)';
+    }
+    sketch.fill(color);
+    sketch.stroke(color);
+    sketch.strokeWeight(1);
+    sketch.ellipse(this.x, this.y, this.r * 2, this.r * 2);
+  }
 };

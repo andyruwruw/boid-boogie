@@ -1,7 +1,7 @@
 import Rectangle from './rectangle';
 import Circle from './circle';
 
-export default function QuadTree(boundary, capacity, draw) {
+export default function QuadTree(boundary, capacity, draw, sketch) {
   if (!boundary) {
     throw TypeError('Boundary is null or undefined.');
   }
@@ -18,6 +18,7 @@ export default function QuadTree(boundary, capacity, draw) {
   this.capacity = capacity;
   this.points = [];
   this.draw = draw;
+  this.sketch = sketch;
   this.divided = false;
 }
 
@@ -43,32 +44,32 @@ QuadTree.prototype = {
     let w = this.boundary.w / 2;
     let h = this.boundary.h / 2;
 
-    let ne = new Rectangle(x + w, y - h, w, h);
+    let ne = new Rectangle(x + w, y, w, h);
     this.northeast = new QuadTree(ne, this.capacity);
-    let nw = new Rectangle(x - w, y - h, w, h);
+    let nw = new Rectangle(x, y, w, h);
     this.northwest = new QuadTree(nw, this.capacity);
     let se = new Rectangle(x + w, y + h, w, h);
     this.southeast = new QuadTree(se, this.capacity);
-    let sw = new Rectangle(x - w, y + h, w, h);
+    let sw = new Rectangle(x, y + h, w, h);
     this.southwest = new QuadTree(sw, this.capacity);
 
-    // if (false) {
-    //   this.drawSquares(ne, nw, se, sw);
-    // }
+    // eslint-disable-next-line no-constant-condition
+    if (this.draw) {
+      this.drawSquares(ne, nw, se, sw);
+    }
 
     this.divided = true;
   },
 
-  // drawSquares(ne, nw, se, sw) {
-  //   fill('rgba(0,0,0,0)');
-  //   stroke('rgba(255,255,255,0.3)');
-  //   strokeWeight(1);
-  //   rectMode(RADIUS);
-  //   rect(ne.x, ne.y, ne.w, ne.h);
-  //   rect(nw.x, nw.y, nw.w, nw.h);
-  //   rect(se.x, se.y, se.w, se.h);
-  //   rect(sw.x, sw.y, sw.w, sw.h);
-  // },
+  drawSquares(ne, nw, se, sw) {
+    this.sketch.fill('rgba(0,0,0,0)');
+    this.sketch.stroke('rgba(255,255,255,0.3)');
+    this.sketch.strokeWeight(1);
+    this.sketch.rect(ne.x, ne.y, ne.w, ne.h);
+    this.sketch.rect(nw.x, nw.y, nw.w, nw.h);
+    this.sketch.rect(se.x, se.y, se.w, se.h);
+    this.sketch.rect(sw.x, sw.y, sw.w, sw.h);
+  },
 
   query(range, found) {
     if (!found) {

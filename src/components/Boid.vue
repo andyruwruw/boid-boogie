@@ -35,13 +35,13 @@ export default {
     currHeight: 0,
     boundary: null,
     boids: [],
-    boidNum: 5,
-    perception: 100,
+    boidNum: 40,
+    perception: 300,
   }),
   methods: {
     setup(sketch) {
       sketch.resizeCanvas(this.width, this.height);
-      this.boundary = new Rectangle(this.width / 2, this.height / 2, this.width, this.height);
+      this.boundary = new Rectangle(0, 0, this.width, this.height);
       for (let i = 0; i < this.boidNum; i++) {
         this.boids.push(new Boid(sketch, Math.random() * this.width, Math.random() * this.height, this.perception))
       }
@@ -51,21 +51,25 @@ export default {
     draw(sketch) {
       sketch.clear();
       sketch.background('#000000');
-      let quadTree = new QuadTree(this.boundary, 4, false);
-      for (let boid of this.boids) {
-        let point = new Point(boid.x, boid.y, boid);
+      let quadTree = new QuadTree(this.boundary, 1, true, sketch);
+
+      for (let i = 0; i < this.boids.length; i++) {
+        let point = new Point(this.boids[i].x, this.boids[i].y, this.boids[i]);
         quadTree.insert(point);
       }
+
+      // console.log(quadTree);
+
       for (let boid of this.boids) {
         let view = new Circle(boid.x, boid.y, this.perception / 2);
+        
         let other = quadTree.query(view).map((point) => point.data);
+        view.show(sketch, other.length);
 
-        boid.edges();
-        boid.flock(other);
-        boid.update();
-        // if (!quadTreeOn)
-        //   drawCircle(view, other.length);
-        boid.show();
+        boid.edges(this.width, this.height);
+        boid.flock(sketch, other);
+        boid.update(sketch);
+        boid.show(sketch);
       }
     },
   },

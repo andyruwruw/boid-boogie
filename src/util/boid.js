@@ -1,9 +1,8 @@
 export default function Boid(sketch, x, y, perception) {
-  this.sketch = sketch;
-  this.position = this.sketch.createVector(x, y);
+  this.position = sketch.createVector(x, y);
   this.velocity = window.p5.Vector.random2D();
-  this.velocity.setMag(this.sketch.random(2, 4));
-  this.acceleration = this.sketch.createVector();
+  this.velocity.setMag(sketch.random(2, 4));
+  this.acceleration = sketch.createVector();
   this.maxForce = .2;
   this.maxSpeed = 5;
   this.perception = perception;
@@ -25,14 +24,14 @@ Boid.prototype = {
     }
   },
 
-  align(boids) {
+  align(sketch, boids) {
     let perceptionRadius = this.perception;
-    let steering = this.sketch.createVector();
+    let steering = sketch.createVector();
     let total = 0;
     for (let other of boids) {
-      let d = this.sketch.dist(this.position.x, this.position.y, other.position.x, other.position.y);
+      let d = sketch.dist(this.position.x, this.position.y, other.position.x, other.position.y);
       if (other != this && d < perceptionRadius) {
-        steering.add(other.velocity);
+        steering.add(other.velocity.x, other.velocity.y, other.velocity.z);
         total++;
       }
     }
@@ -45,12 +44,12 @@ Boid.prototype = {
     return steering;
   },
 
-  separation(boids) {
+  separation(sketch, boids) {
     let perceptionRadius = this.perception;
-    let steering = this.sketch.createVector();
+    let steering = sketch.createVector();
     let total = 0;
     for (let other of boids) {
-      let d = this.sketch.dist(this.position.x, this.position.y, other.position.x, other.position.y);
+      let d = sketch.dist(this.position.x, this.position.y, other.position.x, other.position.y);
       if (other != this && d < perceptionRadius) {
         let diff = window.p5.Vector.sub(this.position, other.position);
         diff.div(d * d);
@@ -67,12 +66,12 @@ Boid.prototype = {
     return steering;
   },
 
-  cohesion(boids) {
+  cohesion(sketch, boids) {
     let perceptionRadius = this.perception;
-    let steering = this.sketch.createVector();
+    let steering = sketch.createVector();
     let total = 0;
     for (let other of boids) {
-      let d = this.sketch.dist(this.position.x, this.position.y, other.position.x, other.position.y);
+      let d = sketch.dist(this.position.x, this.position.y, other.position.x, other.position.y);
       if (other != this && d < perceptionRadius) {
         steering.add(other.position);
         total++;
@@ -88,32 +87,33 @@ Boid.prototype = {
     return steering;
   },
 
-  flock(boids) {
-    let alignment = this.align(boids);
-    let cohesion = this.cohesion(boids);
-    let separation = this.separation(boids);
+  flock(sketch, boids) {
+    let alignment = this.align(sketch, boids);
+    let cohesion = this.cohesion(sketch, boids);
+    let separation = this.separation(sketch, boids);
 
-    alignment.mult(1);
+    console.log(alignment, cohesion, separation);
+
+    alignment.mult(1.5);
     cohesion.mult(1);
-    separation.mult(1);
+    separation.mult(2);
 
     this.acceleration.add(alignment);
     this.acceleration.add(cohesion);
     this.acceleration.add(separation);
   },
 
-  update() {
-    this.position.add(this.velocity);
-    this.velocity.add(this.acceleration);
+  update(sketch) {
+    this.position.add(this.velocity.x, this.velocity.y, this.velocity.z);
+    this.velocity.add(this.acceleration.x, this.acceleration.y, this.acceleration.z);
     this.velocity.limit(this.maxSpeed);
-    this.acceleration.mult(0);
+    this.acceleration = sketch.createVector(0, 0);
   },
 
-  show() {
-    console.log('draw', this.position.x, this.position.y);
-    this.sketch.strokeWeight(6);
-    this.sketch.stroke(255);
-    this.sketch.point(this.position.x, this.position.y);
+  show(sketch) {
+    sketch.strokeWeight(6);
+    sketch.stroke(255);
+    sketch.point(this.position.x, this.position.y);
   },
 
   get x() {

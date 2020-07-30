@@ -24,15 +24,19 @@ Rectangle.prototype = {
 
   contains(point) {
     return (point.x >= this.x - this.w &&
-        point.x <= this.x + this.w &&
-        point.y >= this.y - this.h &&
-        point.y <= this.y + this.h);
+      point.x <= this.x + this.w &&
+      point.y >= this.y - this.h &&
+      point.y <= this.y + this.h);
   },
 
   intersects(range) {
     return !(range.x - range.w > this.x + this.w ||
-        range.x + range.w < this.x - this.w ||
-        range.y - range.h > this.y + this.h ||
-        range.y + range.h < this.y - this.h);
+      range.x + range.w < this.x - this.w ||
+      range.y - range.h > this.y + this.h ||
+      range.y + range.h < this.y - this.h);
+  },
+
+  show(sketch) {
+    sketch.rect(this.x, this.y, this.w, this.h);
   },
 };
