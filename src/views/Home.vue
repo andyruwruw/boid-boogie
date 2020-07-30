@@ -1,18 +1,31 @@
 <template>
   <div>
-    <v-btn @click="login">Login</v-btn>
+    <h1>hellol</h1>
+    <currently-playing v-if="trackDataAvailable" />
   </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapGetters } from 'vuex';
+import CurrentlyPlaying from '@/components/CurrentlyPlaying';
 
 export default {
   name: 'Home',
+  components: {
+    CurrentlyPlaying,
+  },
   computed: {
-    ...mapActions('auth', [
-      'login',
+    ...mapGetters('player', [
+      'trackDataAvailable',
     ]),
+    ...mapGetters('auth', [
+      'getAccessToken',
+    ]),
+  },
+  created() {
+    if (!this.getAccessToken) {
+      this.$router.push('/');
+    }
   },
 };
 </script>

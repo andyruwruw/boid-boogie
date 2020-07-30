@@ -1,9 +1,9 @@
 import api from '@/api';
 
 const state = {
-  accessToken: '',
-  refreshToken: '',
-  expiryTime: ''
+  accessToken: null,
+  refreshToken: null,
+  expiryTime: null
 };
 
 const getters = {
@@ -16,11 +16,9 @@ const mutations = {
   setAccessToken(state, token) {
     state.accessToken = token;
   },
-
   setRefreshToken(state, token) {
     state.refreshToken = token;
   },
-
   setExpiryTime(state, time) {
     state.expiryTime = time;
   }

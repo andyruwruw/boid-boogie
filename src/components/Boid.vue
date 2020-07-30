@@ -9,6 +9,7 @@
 
 <script>
 import VueP5 from 'vue-p5';
+import { mapGetters } from 'vuex';
 import QuadTree from '@/util/quadtree';
 import Rectangle from '@/util/rectangle';
 import Boid from '@/util/boid';
@@ -28,30 +29,6 @@ export default {
     height: {
       type: Number,
       default: 400,
-    },
-    perception: {
-      type: Number,
-      default: 300,
-    },
-    alignment: {
-      type: Number,
-      default: 1.5,
-    },
-    cohesion: {
-      type: Number,
-      default: 1,
-    },
-    separation: {
-      type: Number,
-      default: 2,
-    },
-    maxForce: {
-      type: Number,
-      default: .2,
-    },
-    maxSpeed: {
-      type: Number,
-      default: 5,
     },
   },
   data: () => ({
@@ -75,10 +52,12 @@ export default {
         this.currWidth = this.width;
         this.currHeight = this.height;
       }
+
       let boundary = new Rectangle(0, 0, this.width, this.height);
 
       sketch.clear();
       sketch.background('#000000');
+      
       let quadTree = new QuadTree(boundary, 1, true, sketch);
 
       for (let i = 0; i < this.boids.length; i++) {
@@ -100,7 +79,14 @@ export default {
     },
   },
   computed: {
-    
+    ...mapGetters('boid', [
+      'perception',
+      'alignment',
+      'cohesion',
+      'separation',
+      'maxForce',
+      'maxSpeed',
+    ]),
   },
 }
 </script>

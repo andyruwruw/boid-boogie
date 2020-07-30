@@ -9,6 +9,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@mdi/js": "^5.4.55",
     "@vercel/node": "^1.7.4",
     "axios": "^0.19.2",
     "core-js": "^3.6.5",

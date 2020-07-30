@@ -1,6 +1,7 @@
 import { NowRequest, NowResponse } from '@vercel/node';
 import axios from 'axios';
 import querystring from 'querystring';
+import jwt from 'jsonwebtoken';
 
 /**
  * Get Redirect URL
@@ -18,6 +19,8 @@ const getRedirectUrl = () => {
   }
 };
 
+const generateToken = (data, expires) => jwt.sign(data, process.env.SERVER_SECRET, { expiresIn: expires });
+
 export default async function (req: NowRequest, res: NowResponse) {
   const { code, state } = req.body;
   console.log(req.body);
@@ -34,8 +37,15 @@ export default async function (req: NowRequest, res: NowResponse) {
         Authorization: `Basic ${Buffer.from(`${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_CLIENT_SECRET}`).toString('base64')}`,
       },
     };
-    // Gimme
+
     const response = await axios.post(url, querystring.stringify(data), options);
+
+    const token = generateToken({
+      ...response.data,
+    }, '24h');
+  
+    res.setHeader('Set-Cookie', [`boidboog-token=${token}; SameSite=Strict`]);
+
     return res.send(response.data);
   }
 };  

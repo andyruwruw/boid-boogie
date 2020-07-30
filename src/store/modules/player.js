@@ -10,7 +10,19 @@ const getters = {
   getDeviceID: (state) => state.deviceID,
   getPlayback: (state) => state.playback,
   getPlaybackContext: (state) => state.playbackContext,
-  isPlaying: (state) => state.playback.is_playing
+  isPlaying: (state) => {
+    if (state.playback) {
+      return state.playback.is_playing;
+    }
+  },
+  trackDataAvailable: (state) => {
+    return (state.playbackContext !== null &&
+      'track_window' in state.playbackContext &&
+      'current_track' in state.playbackContext.track_window &&
+      'name' in state.playbackContext.track_window.current_track &&
+      'artists' in state.playbackContext.track_window.current_track &&
+      'album' in state.playbackContext.track_window.current_track);
+  }
 };
 
 const mutations = {
@@ -22,7 +34,7 @@ const mutations = {
   },
   setPlaybackContext(state, playback) {
     state.playbackContext = playback;
-  }
+  },
 };
 
 const actions = {
@@ -89,12 +101,12 @@ const actions = {
         if (state) {
           dispatch('setPlaybackContext', state);
           dispatch('setPlayback');
+          dispatch('track/updateTrack', state, { root: true });
         }
       });
 
       // Ready
       player.addListener('ready', ({ device_id }) => {
-        console.log('Ready with Device ID', device_id);
         commit('setDeviceID', device_id);
 
         api.spotify.player.transferUsersPlayback([device_id], true);

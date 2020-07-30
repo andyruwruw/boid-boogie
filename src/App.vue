@@ -19,15 +19,15 @@
       ></v-slider>
     </v-app-bar>
 
-    <v-main>
-      <router-view></router-view>
-    </v-main>
-
     <boid
       class="canvas"
       :width="windowSize.x"
       :height="windowSize.y"
       :perception="perception"/>
+
+    <v-main>
+      <router-view></router-view>
+    </v-main>
   </v-app>
 </template>
 
@@ -36,12 +36,9 @@ import Boid from '@/components/Boid';
 
 export default {
   name: 'App',
-
   components: {
     Boid,
-
   },
-
   data: () => ({
     windowSize: {
       x: 0,
@@ -56,7 +53,7 @@ export default {
   },
   created() {
 
-  },
+  }
 };
 </script>
 

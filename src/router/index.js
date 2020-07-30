@@ -2,6 +2,7 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 
 import Home from '../views/Home.vue';
+import Landing from '../views/Landing.vue';
 import Redirect from '../views/Redirect.vue';
 
 Vue.use(VueRouter);
@@ -9,6 +10,11 @@ Vue.use(VueRouter);
 const routes = [
   {
     path: '/',
+    name: 'Landing',
+    component: Landing,
+  },
+  {
+    path: '/home',
     name: 'Home',
     component: Home,
   },
