@@ -73,7 +73,7 @@ export default {
 
 .title-card p.description {
   text-align: center;
-  color: rgba(255, 255, 255, 0.795);
+  color: rgba(255, 255, 255, 0.712);
   margin: 0;
 }
 

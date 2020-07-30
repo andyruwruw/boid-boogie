@@ -12,6 +12,15 @@ export default function Boid(sketch, x, y, perception, maxForce, maxSpeed, align
 }
 
 Boid.prototype = {
+  updateValues(perception, maxForce, maxSpeed, alignment, cohesion, separation) {
+    this.maxForce = maxForce;
+    this.maxSpeed = maxSpeed;
+    this.perception = perception;
+    this.alignmentMultiplyer = alignment;
+    this.cohesionMultiplyer = cohesion;
+    this.separationMultiplyer = separation;
+  },
+
   edges(width, height) {
     if (this.position.x > width) {
       this.position.x = 0;

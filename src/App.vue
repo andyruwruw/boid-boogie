@@ -10,13 +10,7 @@
       <img src="./assets/logo.svg" class="logo"/>
 
       <v-spacer></v-spacer>
-
-      <v-slider
-        v-model="perception"
-        min="0"
-        max="300"
-        label="Perception"
-      ></v-slider>
+      
     </v-app-bar>
 
     <boid
@@ -58,6 +52,10 @@ export default {
 </script>
 
 <style>
+#app {
+  background: black;
+}
+
 .canvas {
   position: fixed;
   left: 0;
@@ -75,5 +73,9 @@ export default {
 
 .logo {
   height: 100%;
+}
+
+.theme--light.v-application {
+  background: black !important;
 }
 </style>

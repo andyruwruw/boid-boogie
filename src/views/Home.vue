@@ -1,6 +1,5 @@
 <template>
   <div>
-    <h1>hellol</h1>
     <currently-playing v-if="trackDataAvailable" />
   </div>
 </template>
