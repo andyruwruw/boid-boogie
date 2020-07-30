@@ -29,36 +29,62 @@ export default {
       type: Number,
       default: 400,
     },
+    perception: {
+      type: Number,
+      default: 300,
+    },
+    alignment: {
+      type: Number,
+      default: 1.5,
+    },
+    cohesion: {
+      type: Number,
+      default: 1,
+    },
+    separation: {
+      type: Number,
+      default: 2,
+    },
+    maxForce: {
+      type: Number,
+      default: .2,
+    },
+    maxSpeed: {
+      type: Number,
+      default: 5,
+    },
   },
   data: () => ({
     currWidth: 0,
     currHeight: 0,
-    boundary: null,
     boids: [],
     boidNum: 40,
-    perception: 300,
   }),
   methods: {
     setup(sketch) {
       sketch.resizeCanvas(this.width, this.height);
-      this.boundary = new Rectangle(0, 0, this.width, this.height);
       for (let i = 0; i < this.boidNum; i++) {
-        this.boids.push(new Boid(sketch, Math.random() * this.width, Math.random() * this.height, this.perception))
+        this.boids.push(new Boid(sketch, Math.random() * this.width, Math.random() * this.height, this.perception, this.maxForce, this.maxSpeed, this.alignment, this.cohesion, this.separation))
       }
       this.currWidth = this.width;
       this.currHeight = this.height;
     },
     draw(sketch) {
+      if (this.currWidth !== this.width || this.currHeight !== this.height) {
+        sketch.resizeCanvas(this.width, this.height);
+        this.currWidth = this.width;
+        this.currHeight = this.height;
+      }
+      let boundary = new Rectangle(0, 0, this.width, this.height);
+
       sketch.clear();
       sketch.background('#000000');
-      let quadTree = new QuadTree(this.boundary, 1, true, sketch);
+      let quadTree = new QuadTree(boundary, 1, true, sketch);
 
       for (let i = 0; i < this.boids.length; i++) {
         let point = new Point(this.boids[i].x, this.boids[i].y, this.boids[i]);
         quadTree.insert(point);
       }
-
-      // console.log(quadTree);
 
       for (let boid of this.boids) {
         let view = new Circle(boid.x, boid.y, this.perception / 2);

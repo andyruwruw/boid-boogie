@@ -4,39 +4,19 @@
     style="position: relative;">
     <v-app-bar
       app
-      color="primary"
+      color="rgba(255,255,255,.1)"
       dark
-    >
-      <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
-
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        />
-      </div>
+      class="app-bar">
+      <img src="./assets/logo.svg" class="logo"/>
 
       <v-spacer></v-spacer>
 
-      <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
-      >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
-      </v-btn>
+      <v-slider
+        v-model="perception"
+        min="0"
+        max="300"
+        label="Perception"
+      ></v-slider>
     </v-app-bar>
 
     <v-main>
@@ -46,7 +26,8 @@
     <boid
       class="canvas"
       :width="windowSize.x"
-      :height="windowSize.y"/>
+      :height="windowSize.y"
+      :perception="perception"/>
   </v-app>
 </template>
 
@@ -66,6 +47,7 @@ export default {
       x: 0,
       y: 0,
     },
+    perception: 300,
   }),
   methods: {
     onResize() {
@@ -83,5 +65,18 @@ export default {
   position: fixed;
   left: 0;
   top: 0;
+}
+
+.app-bar {
+  opacity: 0;
+  transition: opacity .2s ease !important;
+}
+
+.app-bar:hover {
+  opacity: 1;
+}
+
+.logo {
+  height: 100%;
 }
 </style>

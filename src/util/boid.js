@@ -1,11 +1,14 @@
-export default function Boid(sketch, x, y, perception) {
+export default function Boid(sketch, x, y, perception, maxForce, maxSpeed, alignment, cohesion, separation) {
   this.position = sketch.createVector(x, y);
   this.velocity = window.p5.Vector.random2D();
   this.velocity.setMag(sketch.random(2, 4));
   this.acceleration = sketch.createVector();
-  this.maxForce = .2;
-  this.maxSpeed = 5;
+  this.maxForce = maxForce;
+  this.maxSpeed = maxSpeed;
   this.perception = perception;
+  this.alignmentMultiplyer = alignment;
+  this.cohesionMultiplyer = cohesion;
+  this.separationMultiplyer = separation;
 }
 
 Boid.prototype = {
@@ -38,7 +41,7 @@ Boid.prototype = {
     if (total > 0) {
       steering.div(total);
       steering.setMag(this.maxSpeed);
-      steering.sub(this.velocity);
+      steering.sub(this.velocity.x, this.velocity.y, this.velocity.z);
       steering.limit(this.maxForce);
     }
     return steering;
@@ -60,7 +63,7 @@ Boid.prototype = {
     if (total > 0) {
       steering.div(total);
       steering.setMag(this.maxSpeed);
-      steering.sub(this.velocity);
+      steering.sub(this.velocity.x, this.velocity.y, this.velocity.z);
       steering.limit(this.maxForce);
     }
     return steering;
@@ -77,11 +80,12 @@ Boid.prototype = {
         total++;
       }
     }
+    
     if (total > 0) {
       steering.div(total);
-      steering.sub(this.position);
+      steering.sub(this.position.x, this.position.y, this.position.z);
       steering.setMag(this.maxSpeed);
-      steering.sub(this.velocity);
+      steering.sub(this.velocity.x, this.velocity.y, this.velocity.z);
       steering.limit(this.maxForce);
     }
     return steering;
@@ -92,11 +96,9 @@ Boid.prototype = {
     let cohesion = this.cohesion(sketch, boids);
     let separation = this.separation(sketch, boids);
 
-    console.log(alignment, cohesion, separation);
-
-    alignment.mult(1.5);
-    cohesion.mult(1);
-    separation.mult(2);
+    alignment.mult(this.alignmentMultiplyer);
+    cohesion.mult(this.cohesionMultiplyer);
+    separation.mult(this.separationMultiplyer);
 
     this.acceleration.add(alignment);
     this.acceleration.add(cohesion);

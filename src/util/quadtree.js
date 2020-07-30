@@ -45,13 +45,13 @@ QuadTree.prototype = {
     let h = this.boundary.h / 2;
 
     let ne = new Rectangle(x + w, y, w, h);
-    this.northeast = new QuadTree(ne, this.capacity);
+    this.northeast = new QuadTree(ne, this.capacity, this.draw, this.sketch);
     let nw = new Rectangle(x, y, w, h);
-    this.northwest = new QuadTree(nw, this.capacity);
+    this.northwest = new QuadTree(nw, this.capacity, this.draw, this.sketch);
     let se = new Rectangle(x + w, y + h, w, h);
-    this.southeast = new QuadTree(se, this.capacity);
+    this.southeast = new QuadTree(se, this.capacity, this.draw, this.sketch);
     let sw = new Rectangle(x, y + h, w, h);
-    this.southwest = new QuadTree(sw, this.capacity);
+    this.southwest = new QuadTree(sw, this.capacity, this.draw, this.sketch);
 
     // eslint-disable-next-line no-constant-condition
     if (this.draw) {
