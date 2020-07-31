@@ -10,6 +10,13 @@
       <img src="./assets/logo.svg" class="logo"/>
 
       <v-spacer></v-spacer>
+
+      <v-btn
+        icon
+        class="github-button"
+        href="https://github.com/andyruwruw/boid-boogie">
+        <v-icon>{{ github }}</v-icon>
+      </v-btn>
       
     </v-app-bar>
 
@@ -27,6 +34,7 @@
 
 <script>
 import Boid from '@/components/Boid';
+import { mdiGithub } from '@mdi/js';
 
 export default {
   name: 'App',
@@ -39,6 +47,7 @@ export default {
       y: 0,
     },
     perception: 300,
+    github: mdiGithub,
   }),
   methods: {
     onResize() {
@@ -77,5 +86,9 @@ export default {
 
 .theme--light.v-application {
   background: black !important;
+}
+
+.github-button {
+  margin-right: 12px;
 }
 </style>

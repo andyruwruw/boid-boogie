@@ -91,7 +91,7 @@ const actions = {
   },
   async trackFrameUpdate ({ commit, state }) {
     if (state.currID != null && state.analysis != null) {
-      const cursor = ((new Date()).getTime() - state.start + 500);
+      const cursor = ((new Date()).getTime() - state.start + 750);
       commit('setProgress', cursor);
     }
   },

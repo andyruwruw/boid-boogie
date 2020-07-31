@@ -38,16 +38,16 @@ export default {
     currHeight: 0,
     boundary: null,
 
-    boidNum: 100,
+    boidNum: 120,
     boids: [],
     
-    perception: 150,
-    alignment: .8,
-    cohesion: 1,
-    separation: 1,
+    perception: 200,
+    alignment: 1,
+    cohesion: 1.5,
+    separationModifier: 0,
 
     maxForce: .2,
-    maxSpeed: 8,
+    maxSpeed: 14,
 
     averagePitch: .2,
     hue: 292,
@@ -74,6 +74,12 @@ export default {
     barDuration() {
       return this.activeBar.duration;
     },
+    density() {
+      return this.width / 10000 * this.height / this.boidNum;
+    },
+    separation() {
+      return Math.max(this.density + this.separationModifier, .8 + this.separationModifier);
+    }
   },
   methods: {
     ...mapActions('track', [
@@ -142,11 +148,10 @@ export default {
     },
     updateParameters() {
       if (this.inicialized) {
-        this.separation = this.cos( 1, .8,
-          Math.round(this.beatStart),
-          Math.round(this.beatStart) + Math.round(this.beatDuration),
+        this.alignment = this.cos(1, .4,
+          Math.round(this.barStart),
+          Math.round(this.barStart) + Math.round(this.barDuration),
         );
-        // console.log(this.separation);
       }
     },
     updateBoids(sketch, quadTree) {
@@ -162,7 +167,7 @@ export default {
         boid.edges(this.width, this.height);
         boid.flock(sketch, other);
         if (this.inicialized) {
-          boid.section(sketch, this.activeSection);
+          boid.section(sketch, this.activeBar, this.width, this.height, this.beatStart, this.beatDuration, this.progress);
         }
         boid.update(sketch);
         boid.show(sketch, this.hue);
@@ -187,9 +192,6 @@ export default {
     },
   },
   watch: {
-    // activeBeat(val) {
-    //   console.log(val);
-    // },
     activeSection(val) {
       switch (val.index % 5) {
         case 0:
@@ -210,7 +212,7 @@ export default {
       }
     },
     activeSegment(val) {
-      console.log(val);
+      this.maxSpeed = ((val.loudness_max + 50) / 50 * 3) + 8;
     },
   },
 };

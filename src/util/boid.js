@@ -10,6 +10,9 @@ export default function Boid(sketch, x, y, perception, maxForce, maxSpeed, align
   this.alignmentMultiplyer = alignment;
   this.cohesionMultiplyer = cohesion;
   this.separationMultiplyer = separation;
+  this.customSeparation = 0;
+  this.customAlignment = 0;
+  this.customCohesion = 0;
 }
 
 Boid.prototype = {
@@ -106,34 +109,86 @@ Boid.prototype = {
     let cohesion = this.cohesion(sketch, boids);
     let separation = this.separation(sketch, boids);
 
-    alignment.mult(this.alignmentMultiplyer);
-    cohesion.mult(this.cohesionMultiplyer);
-    separation.mult(this.separationMultiplyer);
+    alignment.mult(this.alignmentMultiplyer + this.customAlignment);
+    cohesion.mult(this.cohesionMultiplyer + this.customCohesion);
+    separation.mult(this.separationMultiplyer + this.customSeparation);
 
     this.acceleration.add(alignment);
     this.acceleration.add(cohesion);
     this.acceleration.add(separation);
   },
 
-  section(sketch, section) {
-    switch (section) {
-      default: 
+  section(sketch, section, width, height, beatStart, beatDuration, progress) {
+    switch(section.index % 3) {
+      case 50: 
+        this.resetCustomModifiers();
         return;
+      case 100:
+        //this.backAndForth(sketch, width, height);
+        this.resetCustomModifiers();
+        return
+      case 2: 
+        this.explodyBalls(sketch, beatStart, beatDuration, progress);
+        return
+      default:
+        this.resetCustomModifiers();
+        return
     }
-    // console.log('index', section.index);
-    // let animation = section.index % 3;
-    // switch(animation) {
-    //   case 0: 
-    //     console.log(0);
-    //     break;
-    //   case 1: 
-    //     console.log(1);
-    //     break;
-    //   case 2: 
-    //     console.log(2);
-    //     break;
-    //   default break;
-    // }
+  },
+
+  resetCustomModifiers() {
+    this.customSeparation = 0;
+    this.customAlignment = 0;
+    this.customCohesion = 0;
+  },
+
+  backAndForth(sketch, width, height) {
+    this.customSeparation = 0;
+    this.customAlignment = 0;
+    this.customCohesion = 0;
+
+    let steering = sketch.createVector();
+    switch (this.index % 4) {
+      case 0: 
+        steering.add(sketch.createVector(width, height));
+        break;
+      case 1: 
+        steering.add(sketch.createVector(-1, height));
+        break;
+      case 2: 
+        steering.add(sketch.createVector(width, -1));
+        break;
+      default:
+        steering.add(sketch.createVector(-1, -1));
+        break;
+    }
+    steering.sub(this.position.x, this.position.y, this.position.z);
+    steering.setMag(this.maxSpeed + 5);
+    steering.sub(this.velocity.x, this.velocity.y, this.velocity.z);
+    steering.limit(this.maxForce + .5);
+
+    this.acceleration.add(steering);
+  },
+
+  explodyBalls(sketch, beatStart, beatDuration, progress) {
+    this.customAlignment = 0;
+
+    this.customSeparation = this.cos( 10, 1,
+      Math.round(beatStart),
+      Math.round(beatStart) + Math.round(beatDuration),
+      progress
+    );
+    this.customCohesion = this.cos( 1, 10,
+      Math.round(beatStart),
+      Math.round(beatStart) + Math.round(beatDuration),
+      progress
+    );
+  },
+
+  cos( top, bottom, start, end, progress ) {
+    let a = (top - bottom) / 2;
+    let b = (2 * Math.PI) / (end - start);
+    return a * Math.cos(b * (progress - start)) + a + bottom;
   },
 
   update(sketch) {
