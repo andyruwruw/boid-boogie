@@ -1,24 +1,11 @@
-# boid-boogie
+<p align="center">
+  <img src="https://raw.githubusercontent.com/andyruwruw/boid-boogie/master/src/assets/logo.svg">
+</p>
 
-## Project setup
-```
-npm install
-```
+<h2 align="center">
+  boid boogie
+</h2>
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+<p align="center">
+  a spotify driven boid simulation
+</p>
