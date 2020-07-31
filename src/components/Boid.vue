@@ -161,7 +161,8 @@ export default {
         let view = new Circle(boid.x, boid.y, this.perception / 2);
         let other = quadTree.query(view).map((point) => point.data);
 
-        view.show(sketch, other.length, highlight);
+        let radius = new Circle(boid.x, boid.y, 75);
+        radius.show(sketch, other.length, highlight);
 
         boid.updateValues(this.perception, this.maxForce, this.maxSpeed, this.alignment, this.cohesion, this.separation);
         boid.edges(this.width, this.height);
