@@ -50,6 +50,7 @@ export default {
     maxSpeed: 8,
 
     averagePitch: .2,
+    hue: 292,
   }),
   computed: {
     ...mapGetters('track', [
@@ -164,7 +165,7 @@ export default {
           boid.section(sketch, this.activeSection);
         }
         boid.update(sketch);
-        boid.show(sketch);
+        boid.show(sketch, this.hue);
       }
     },
     getColor() {
@@ -177,7 +178,7 @@ export default {
       } else {
         alpha = 0.03;
       }
-      return `rgba(206,120,210,${alpha})`;
+      return `hsla(${this.hue}, 50%, 65%, ${alpha})`
     },
     cos( top, bottom, start, end ) {
       let a = (top - bottom) / 2;
@@ -189,6 +190,25 @@ export default {
     // activeBeat(val) {
     //   console.log(val);
     // },
+    activeSection(val) {
+      switch (val.index % 5) {
+        case 0:
+          this.hue = 292;
+          break;
+        case 1:
+          this.hue = 193;
+          break;
+        case 2:
+          this.hue = 122;
+          break;
+        case 3:
+          this.hue = 39;
+          break;
+        default:
+          this.hue = 0;
+          break;
+      }
+    },
     activeSegment(val) {
       console.log(val);
     },

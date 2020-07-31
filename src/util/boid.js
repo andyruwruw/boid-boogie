@@ -143,31 +143,35 @@ Boid.prototype = {
     this.acceleration = sketch.createVector(0, 0);
   },
 
-  show(sketch) {
+  show(sketch, hue) {
     sketch.strokeWeight(6);
     switch (this.index % 3) {
       case 0: {
-        sketch.stroke(156, 29, 176);
+        sketch.stroke(`hsl(${hue}, 72%, 40%)`);
         break;
       }
       case 1: {
-        sketch.stroke(186, 104, 200);
+        sketch.stroke(`hsl(${hue}, 47%, 60%)`);
         break;
       }
       case 2: {
-        sketch.stroke(74, 20, 140);
+        let lowHue = hue - 60;
+        if (lowHue < 0) {
+          lowHue = lowHue + 225;
+        }
+        sketch.stroke(`hsl(${lowHue}, 75%, 31%)`);
         break;
       }
     }
     
     let forwards = sketch.createVector(this.velocity.x, this.velocity.y, 0);
-    forwards.setMag(7);
+    forwards.setMag(5);
     let backRight = sketch.createVector(this.velocity.x, this.velocity.y, 0);
-    backRight.setMag(3);
-    backRight.rotate(sketch.radians(120));
+    backRight.setMag(5);
+    backRight.rotate(sketch.radians(140));
     let backLeft = sketch.createVector(this.velocity.x, this.velocity.y, 0);
-    backLeft.setMag(3);
-    backLeft.rotate(sketch.radians(-120));
+    backLeft.setMag(5);
+    backLeft.rotate(sketch.radians(-140));
     sketch.triangle(
       forwards.x + this.position.x,
       forwards.y + this.position.y,
