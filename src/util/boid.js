@@ -1,4 +1,5 @@
-export default function Boid(sketch, x, y, perception, maxForce, maxSpeed, alignment, cohesion, separation) {
+export default function Boid(sketch, x, y, perception, maxForce, maxSpeed, alignment, cohesion, separation, index) {
+  this.index = index;
   this.position = sketch.createVector(x, y);
   this.velocity = window.p5.Vector.random2D();
   this.velocity.setMag(sketch.random(2, 4));
@@ -114,6 +115,27 @@ Boid.prototype = {
     this.acceleration.add(separation);
   },
 
+  section(sketch, section) {
+    switch (section) {
+      default: 
+        return;
+    }
+    // console.log('index', section.index);
+    // let animation = section.index % 3;
+    // switch(animation) {
+    //   case 0: 
+    //     console.log(0);
+    //     break;
+    //   case 1: 
+    //     console.log(1);
+    //     break;
+    //   case 2: 
+    //     console.log(2);
+    //     break;
+    //   default break;
+    // }
+  },
+
   update(sketch) {
     this.position.add(this.velocity.x, this.velocity.y, this.velocity.z);
     this.velocity.add(this.acceleration.x, this.acceleration.y, this.acceleration.z);
@@ -123,8 +145,37 @@ Boid.prototype = {
 
   show(sketch) {
     sketch.strokeWeight(6);
-    sketch.stroke(255);
-    sketch.point(this.position.x, this.position.y);
+    switch (this.index % 3) {
+      case 0: {
+        sketch.stroke(156, 29, 176);
+        break;
+      }
+      case 1: {
+        sketch.stroke(186, 104, 200);
+        break;
+      }
+      case 2: {
+        sketch.stroke(74, 20, 140);
+        break;
+      }
+    }
+    
+    let forwards = sketch.createVector(this.velocity.x, this.velocity.y, 0);
+    forwards.setMag(7);
+    let backRight = sketch.createVector(this.velocity.x, this.velocity.y, 0);
+    backRight.setMag(3);
+    backRight.rotate(sketch.radians(120));
+    let backLeft = sketch.createVector(this.velocity.x, this.velocity.y, 0);
+    backLeft.setMag(3);
+    backLeft.rotate(sketch.radians(-120));
+    sketch.triangle(
+      forwards.x + this.position.x,
+      forwards.y + this.position.y,
+      backRight.x + this.position.x,
+      backRight.y + this.position.y,
+      backLeft.x + this.position.x,
+      backLeft.y + this.position.y
+    );
   },
 
   get x() {

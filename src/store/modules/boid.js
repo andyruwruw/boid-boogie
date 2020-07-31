@@ -1,10 +1,10 @@
 const state = {
-  perception: 300,
-  alignment: 1,
+  perception: 200,
+  alignment: 2,
   cohesion: 1,
   separation: 1.5,
   maxForce: .2,
-  maxSpeed: 5,
+  maxSpeed: 20,
 };
 
 const getters = {
@@ -35,21 +35,29 @@ const actions = {
 
     if (activeInterval !== null && progress !== null && 'beats' in activeInterval && 'start' in activeInterval.beats) {
       let value = await context.dispatch('parabolic', { 
-        top: 5,
+        top: 200,
+        bottom: 150,
+        start: Math.round(activeInterval.bars.start),
+        end: Math.round(activeInterval.bars.start) + Math.round(activeInterval.bars.duration),
+        progress,
+      });
+      context.commit('setPerception', value);
+      value = await context.dispatch('parabolic', { 
+        top: 10,
+        bottom: 0,
+        start: Math.round(activeInterval.bars.start),
+        end: Math.round(activeInterval.bars.start) + Math.round(activeInterval.bars.duration),
+        progress,
+      });
+      context.commit('setSeparation', value);
+      value = await context.dispatch('parabolic', { 
+        top: 2,
         bottom: 0,
         start: Math.round(activeInterval.beats.start),
         end: Math.round(activeInterval.beats.start) + Math.round(activeInterval.beats.duration),
         progress,
       });
-      context.commit('setSeparation', value);
-      value = await context.dispatch('parabolic', { 
-        top: 10,
-        bottom: 8,
-        start: Math.round(activeInterval.beats.start),
-        end: Math.round(activeInterval.beats.start) + Math.round(activeInterval.beats.duration),
-        progress,
-      });
-      context.commit('setMaxSpeed', value);
+      context.commit('setCohesion', value);
       value = await context.dispatch('parabolic', { 
         top: .5,
         bottom: .2,

@@ -6,12 +6,29 @@ const state = {
   start: 0,
   progress: 0,
   activeInterval: {},
+  activeBeat: null,
+  activeBar: null,
+  activeSegment: null,
+  activeSection: null,
+  activeTatum: null,
 };
 
 const getters = {
   analysis: state => state.analysis,
   activeInterval: state => state.activeInterval,
+  activeBeat: state => state.activeBeat,
+  activeBar: state => state.activeBar,
+  activeSegment: state => state.activeSegment,
+  activeSection: state => state.activeSection,
+  activeTatum: state => state.activeTatum,
   progress: state => state.progress,
+  inicialized: state => (state.currID != null
+    && state.analysis
+    && state.activeBeat
+    && state.activeBar
+    && state.activeSegment
+    && state.activeSection
+    && state.activeTatum),
 };
 
 const mutations = {
@@ -20,13 +37,30 @@ const mutations = {
   setStart: (state, start) => state.start = start,
   setProgress: (state, progress) => state.progress = progress,
   setActiveInterval: (state, { type, interval }) => state.activeInterval[type] = interval,
+  setActiveBeat: (state, beat) => state.activeBeat = beat,
+  setActiveBar: (state, bar) => state.activeBar = bar,
+  setActiveSegment: (state, segment) => state.activeSegment = segment,
+  setActiveSection: (state, section) => state.activeSection = section,
+  setActiveTatum: (state, tatum) => state.activeTatum = tatum,
+  resetActiveInterval: (state) => {
+    state.activeBeat = null;
+    state.activeBar = null;
+    state.activeSegment = null;
+    state.activeSection = null;
+    state.activeTatum = null;
+  },
 };
 
 const actions = {
   async updateTrack(context, track) {
-    const { id } = track.track_window.current_track;
-    context.commit('setStart', (new Date()).getTime() - track.position);
-    context.commit('setProgress', track.position);
+    context.commit('resetActiveInterval');
+    const { position, track_window, timestamp } = track;
+    const { id } = track_window.current_track;
+
+    const delay = (new Date()).getTime() - timestamp;
+
+    context.commit('setStart', (new Date()).getTime() - position + delay);
+    context.commit('setProgress', position);
 
     if (id !== context.state.currID) {
       context.commit('setCurrID', id);
@@ -49,19 +83,17 @@ const actions = {
       context.commit('setAnalysis', response.data);
     }
   },
-  async trackTickUpdate ({ commit, dispatch, state }) {
+  async trackTickUpdate ({ dispatch, state }) {
     if (state.currID != null && state.analysis != null) {
-      commit('setProgress', ((new Date()).getTime() - state.start));
-      console.log(state.progress);
       await dispatch('setActiveIntervals');
     }
-    dispatch('boid/boidTickUpdate', null, { root: true });
+    // dispatch('boid/boidTickUpdate', null, { root: true });
   },
-  async trackFrameUpdate ({ commit, dispatch, state }) {
+  async trackFrameUpdate ({ commit, state }) {
     if (state.currID != null && state.analysis != null) {
-      commit('setProgress', ((new Date()).getTime() - state.start));
+      const cursor = ((new Date()).getTime() - state.start + 500);
+      commit('setProgress', cursor);
     }
-    dispatch('boid/boidFrameUpdate', null, { root: true });
   },
   setActiveIntervals ({ commit, state }) {
     const determineInterval = (type) => {
@@ -78,15 +110,26 @@ const actions = {
     }
   
     ['tatums', 'segments', 'beats', 'bars', 'sections'].forEach(type => {
-      const index = determineInterval(type)
-      const interval = { ...state.analysis[type][index], index }
-      const { start, duration } = interval;
-      const elapsed = state.trackProgress - start;
-      interval.elapsed = elapsed;
-      interval.progress = elapsed / duration;
-      commit('setActiveInterval', { type, interval });
+      const index = determineInterval(type);
+      const stateFields = {
+        tatums: 'activeTatum',
+        segments: 'activeSegment',
+        beats: 'activeBeat',
+        bars: 'activeBar', 
+        sections: 'activeSection',
+      };
+      if (!(state[stateFields[type]]) || state[stateFields[type]].index !== index) {
+        const updates = {
+          tatums: 'setActiveTatum',
+          segments: 'setActiveSegment',
+          beats: 'setActiveBeat',
+          bars: 'setActiveBar', 
+          sections: 'setActiveSection',
+        };
+        const interval = { ...state.analysis[type][index], index };
+        commit(updates[type], interval);
+      }
     });
-    // console.log(state.activeInterval);
   },
 };
 
