@@ -198,8 +198,8 @@ Boid.prototype = {
     this.acceleration = sketch.createVector(0, 0);
   },
 
-  show(sketch, hue) {
-    sketch.strokeWeight(6);
+  show(sketch, hue, style) {
+    
     switch (this.index % 3) {
       case 0: {
         sketch.stroke(`hsl(${hue}, 72%, 40%)`);
@@ -218,23 +218,34 @@ Boid.prototype = {
         break;
       }
     }
-    
-    let forwards = sketch.createVector(this.velocity.x, this.velocity.y, 0);
-    forwards.setMag(5);
-    let backRight = sketch.createVector(this.velocity.x, this.velocity.y, 0);
-    backRight.setMag(5);
-    backRight.rotate(sketch.radians(140));
-    let backLeft = sketch.createVector(this.velocity.x, this.velocity.y, 0);
-    backLeft.setMag(5);
-    backLeft.rotate(sketch.radians(-140));
-    sketch.triangle(
-      forwards.x + this.position.x,
-      forwards.y + this.position.y,
-      backRight.x + this.position.x,
-      backRight.y + this.position.y,
-      backLeft.x + this.position.x,
-      backLeft.y + this.position.y
-    );
+
+    switch (style) {
+      case 'Triangle': {
+        sketch.strokeWeight(6);
+        let forwards = sketch.createVector(this.velocity.x, this.velocity.y, 0);
+        forwards.setMag(5);
+        let backRight = sketch.createVector(this.velocity.x, this.velocity.y, 0);
+        backRight.setMag(5);
+        backRight.rotate(sketch.radians(140));
+        let backLeft = sketch.createVector(this.velocity.x, this.velocity.y, 0);
+        backLeft.setMag(5);
+        backLeft.rotate(sketch.radians(-140));
+        sketch.triangle(
+          forwards.x + this.position.x,
+          forwards.y + this.position.y,
+          backRight.x + this.position.x,
+          backRight.y + this.position.y,
+          backLeft.x + this.position.x,
+          backLeft.y + this.position.y
+        );
+        break;
+      }
+      default: {
+        sketch.strokeWeight(10);
+        sketch.point(this.position.x, this.position.y);
+        break;
+      } 
+    }
   },
 
   get x() {

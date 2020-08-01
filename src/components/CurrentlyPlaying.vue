@@ -1,8 +1,16 @@
 <template>
-  <div>
+  <div :class="$style.component">
     <img :src="image"/>
-    <p>{{ name }}</p>
-    <p>{{ artists }}</p>
+
+    <div :class="$style.details">
+      <p :class="$style.title">
+        {{ name }}
+      </p>
+
+      <p :class="$style.artists">
+        {{ artists }}
+      </p>
+    </div>
   </div>
 </template>
 
@@ -14,16 +22,53 @@ export default {
   computed: {
     ...mapGetters('player', [
       'getPlaybackContext',
+      'track',
+    ]),
+    ...mapGetters('track', [
+      'inicialized'
     ]),
     image() {
-      return this.getPlaybackContext.track_window.currentTrack.album.images[0];
+      if (this.track) {
+        return this.track.album.images[0].url;
+      }
+      return '';
     },
     name() {
-      return this.getPlaybackContext.track_window.currentTrack.name;
+      if (this.track) {
+        return this.track.name;
+      }
+      return 'lmao';
     },
     artists() {
-      return this.getPlaybackContext.track_window.currentTrack.artists.join(',');
+      if (this.track) {
+        return this.track.artists.map(artist => artist.name).join(',');
+      }
+      return '';
     },
   },
 }
 </script>
+
+<style module>
+.component {
+  display: flex;
+  align-items: center;
+}
+
+.component img {
+  width: 6rem;
+}
+
+.details {
+  margin-left: 24px;
+}
+
+.details .title {
+  font-size: 1.5rem;
+  margin: 0;
+}
+
+.details .artists {
+  margin: 0;
+}
+</style>

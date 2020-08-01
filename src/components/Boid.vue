@@ -38,7 +38,6 @@ export default {
     currHeight: 0,
     boundary: null,
 
-    boidNum: 120,
     boids: [],
     
     perception: 200,
@@ -61,6 +60,14 @@ export default {
       'activeTatum',
       'progress',
       'inicialized',
+      'features',
+    ]),
+    ...mapGetters('preferences', [
+      'circles',
+      'pulse',
+      'boidNum',
+      'style',
+      'quadTree',
     ]),
     beatStart() {
       return this.activeBeat.start || 0;
@@ -96,12 +103,14 @@ export default {
     draw(sketch) {
       this.checkTick();
       this.trackFrameUpdate();
+      this.checkBoidNum(sketch);
       this.resizeCanvas(sketch);
-      const quadTree = this.generateQuadTree();
       this.updateParameters();
 
       sketch.clear();
       sketch.background('rgba(10,10,10,1)');
+
+      const quadTree = this.generateQuadTree(sketch);
 
       this.updateBoids(sketch, quadTree);
     },
@@ -121,6 +130,27 @@ export default {
         ));
       }
     },
+    checkBoidNum(sketch) {
+      if (this.boids.length < this.boidNum) {
+        for (let i = this.boids.length; i < this.boidNum; i++) {
+          this.boids.push(new Boid(
+          sketch,
+          Math.random() * this.width,
+          Math.random() * this.height,
+          this.perception,
+          this.maxForce,
+          this.maxSpeed,
+          this.alignment,
+          this.cohesion,
+          this.separation,
+          i,
+        ));
+        }
+      }
+    },
+    destroyBoids() {
+      this.boids.length = this.boidNum;
+    },
     checkTick() {
       if (this.tickCounter > 0) {
         this.tickCounter -= 1;
@@ -138,11 +168,11 @@ export default {
       }
     },
     generateQuadTree(sketch) {
-      let quadTree = new QuadTree(this.boundary, 1, false, sketch);
+      let quadTree = new QuadTree(this.boundary, 4, this.quadTree);
 
       for (let i = 0; i < this.boids.length; i++) {
         let point = new Point(this.boids[i].x, this.boids[i].y, this.boids[i]);
-        quadTree.insert(point);
+        quadTree.insert(point, sketch);
       }
       return quadTree;
     },
@@ -155,15 +185,20 @@ export default {
       }
     },
     updateBoids(sketch, quadTree) {
-      const highlight = this.getColor();
+      let highlight;
+      if (this.circles) {
+        highlight = this.getColor();
+      }
 
       for (let boid of this.boids) {
         let view = new Circle(boid.x, boid.y, this.perception / 2);
         let other = quadTree.query(view).map((point) => point.data);
 
-        let radius = new Circle(boid.x, boid.y, 75);
-        radius.show(sketch, other.length, highlight);
-
+        if (this.circles) {
+          let radius = new Circle(boid.x, boid.y, 75);
+          radius.show(sketch, other.length, highlight);
+        }
+        
         boid.updateValues(this.perception, this.maxForce, this.maxSpeed, this.alignment, this.cohesion, this.separation);
         boid.edges(this.width, this.height);
         boid.flock(sketch, other);
@@ -171,12 +206,12 @@ export default {
           boid.section(sketch, this.activeBar, this.width, this.height, this.beatStart, this.beatDuration, this.progress);
         }
         boid.update(sketch);
-        boid.show(sketch, this.hue);
+        boid.show(sketch, this.hue, this.style);
       }
     },
     getColor() {
       let alpha;
-      if (this.inicialized) {
+      if (this.inicialized && this.pulse) {
         alpha = this.cos( .03, .01,
           Math.round(this.beatStart),
           Math.round(this.beatStart) + Math.round(this.beatDuration),
@@ -212,9 +247,15 @@ export default {
           break;
       }
     },
-    activeSegment(val) {
-      this.maxSpeed = ((val.loudness_max + 50) / 50 * 3) + 8;
-    },
+    // activeSegment(val) {
+    //   console.log(val);
+    //   //this.maxSpeed = ((val.loudness_max + 50) / 50 * 8) + 8;
+    // },
+    boidNum(val) {
+      if (this.boids.length > val) {
+        this.destroyBoids();
+      }
+    }
   },
 };
 </script>

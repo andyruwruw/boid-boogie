@@ -2,6 +2,10 @@
   <img src="https://raw.githubusercontent.com/andyruwruw/boid-boogie/master/documentation/logo.PNG">
 </p>
 
+<p align="center">
+<a href="https://boidboogie.com">https://boidboogie.com</a>
+</p>
+
 # Overview
 
 Boid boogie is a flocking simulation that uses [Spotify's API](https://developer.spotify.com/documentation/web-api/) and [Spotify's Web Playback SDK](https://developer.spotify.com/documentation/web-playback-sdk/) to match the animations to your current playback.

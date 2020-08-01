@@ -11,13 +11,13 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn
-        icon
-        class="github-button"
-        href="https://github.com/andyruwruw/boid-boogie">
-        <v-icon>{{ github }}</v-icon>
-      </v-btn>
-      
+      <div class="actions">
+        <v-btn
+          icon
+          href="https://github.com/andyruwruw/boid-boogie">
+          <v-icon>{{ github }}</v-icon>
+        </v-btn>
+      </div>
     </v-app-bar>
 
     <boid
@@ -54,9 +54,6 @@ export default {
       this.windowSize = { x: window.innerWidth, y: window.innerHeight };
     },
   },
-  created() {
-
-  }
 };
 </script>
 
@@ -88,7 +85,8 @@ export default {
   background: black !important;
 }
 
-.github-button {
-  margin-right: 12px;
+.actions {
+  display: flex;
+  padding: 0 12px;
 }
 </style>

@@ -1,21 +1,7 @@
 import { NowRequest, NowResponse } from '@vercel/node';
 import querystring from 'querystring';
 
-/**
- * Get Redirect URL
- * Returns URL for Spotify Auth Callback.
- * @param {String} sender Service sending request.
- */
-const getRedirectUrl = () => {
-  switch (process.env.NODE_ENV) {
-    case 'production': {
-      return 'https://boidboogie.com/redirect';
-    }
-    default: {
-      return 'http://localhost:3000/redirect';
-    }
-  }
-};
+import { getRedirectUrl } from '../util/auth';
 
 export default async function (req: NowRequest, res: NowResponse) {
   const scopes = [

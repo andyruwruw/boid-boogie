@@ -1,7 +1,7 @@
 import Rectangle from './rectangle';
 import Circle from './circle';
 
-export default function QuadTree(boundary, capacity, draw, sketch) {
+export default function QuadTree(boundary, capacity, draw) {
   if (!boundary) {
     throw TypeError('Boundary is null or undefined.');
   }
@@ -18,12 +18,11 @@ export default function QuadTree(boundary, capacity, draw, sketch) {
   this.capacity = capacity;
   this.points = [];
   this.draw = draw;
-  this.sketch = sketch;
   this.divided = false;
 }
 
 QuadTree.prototype = {
-  insert(point) {
+  insert(point, sketch) {
     if (!this.boundary.contains(point)) {
       return false;
     }
@@ -32,43 +31,42 @@ QuadTree.prototype = {
       return true;
     }
     if (!this.divided) {
-      this.subdivide();
+      this.subdivide(sketch);
     }
-    return (this.northeast.insert(point) || this.northwest.insert(point) ||
-    this.southeast.insert(point) || this.southwest.insert(point));
+    return (this.northeast.insert(point, sketch) || this.northwest.insert(point, sketch) ||
+    this.southeast.insert(point, sketch) || this.southwest.insert(point, sketch));
   },
 
-  subdivide() {
+  subdivide(sketch) {
     let x = this.boundary.x;
     let y = this.boundary.y;
     let w = this.boundary.w / 2;
     let h = this.boundary.h / 2;
 
     let ne = new Rectangle(x + w, y, w, h);
-    this.northeast = new QuadTree(ne, this.capacity, this.draw, this.sketch);
+    this.northeast = new QuadTree(ne, this.capacity, this.draw);
     let nw = new Rectangle(x, y, w, h);
-    this.northwest = new QuadTree(nw, this.capacity, this.draw, this.sketch);
+    this.northwest = new QuadTree(nw, this.capacity, this.draw);
     let se = new Rectangle(x + w, y + h, w, h);
-    this.southeast = new QuadTree(se, this.capacity, this.draw, this.sketch);
+    this.southeast = new QuadTree(se, this.capacity, this.draw);
     let sw = new Rectangle(x, y + h, w, h);
-    this.southwest = new QuadTree(sw, this.capacity, this.draw, this.sketch);
+    this.southwest = new QuadTree(sw, this.capacity, this.draw);
 
-    // eslint-disable-next-line no-constant-condition
     if (this.draw) {
-      this.drawSquares(ne, nw, se, sw);
+      this.drawSquares(ne, nw, se, sw, sketch);
     }
 
     this.divided = true;
   },
 
-  drawSquares(ne, nw, se, sw) {
-    this.sketch.fill('rgba(0,0,0,0)');
-    this.sketch.stroke('rgba(255,255,255,0.3)');
-    this.sketch.strokeWeight(1);
-    this.sketch.rect(ne.x, ne.y, ne.w, ne.h);
-    this.sketch.rect(nw.x, nw.y, nw.w, nw.h);
-    this.sketch.rect(se.x, se.y, se.w, se.h);
-    this.sketch.rect(sw.x, sw.y, sw.w, sw.h);
+  drawSquares(ne, nw, se, sw, sketch) {
+    sketch.fill('rgba(0,0,0,0)');
+    sketch.stroke('rgba(255,255,255,0.3)');
+    sketch.strokeWeight(1);
+    sketch.rect(ne.x, ne.y, ne.w, ne.h);
+    sketch.rect(nw.x, nw.y, nw.w, nw.h);
+    sketch.rect(se.x, se.y, se.w, se.h);
+    sketch.rect(sw.x, sw.y, sw.w, sw.h);
   },
 
   query(range, found) {

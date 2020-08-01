@@ -11,6 +11,7 @@ const state = {
   activeSegment: null,
   activeSection: null,
   activeTatum: null,
+  features: null,
 };
 
 const getters = {
@@ -29,6 +30,7 @@ const getters = {
     && state.activeSegment
     && state.activeSection
     && state.activeTatum),
+  features: state => state.features,
 };
 
 const mutations = {
@@ -49,6 +51,7 @@ const mutations = {
     state.activeSection = null;
     state.activeTatum = null;
   },
+  setFeatures: (state, features) => state.features = features,
 };
 
 const actions = {
@@ -80,7 +83,10 @@ const actions = {
         });
       });
 
-      context.commit('setAnalysis', response.data);
+      await context.commit('setAnalysis', response.data);
+
+      response = await api.spotify.track.getAudioFeatures(id);
+      await context.commit('setFeatures', response.data);
     }
   },
   async trackTickUpdate ({ dispatch, state }) {

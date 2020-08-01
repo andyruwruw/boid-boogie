@@ -1,28 +1,22 @@
 import api from '@/api';
 
 const state = {
-  deviceID: '',
-  playback: '',
-  playbackContext: ''
+  deviceID: null,
+  playback: null,
+  playbackContext: null,
+  track: null,
 };
 
 const getters = {
   getDeviceID: (state) => state.deviceID,
   getPlayback: (state) => state.playback,
   getPlaybackContext: (state) => state.playbackContext,
+  track: (state) => state.track,
   isPlaying: (state) => {
     if (state.playback) {
       return state.playback.is_playing;
     }
   },
-  trackDataAvailable: (state) => {
-    return (state.playbackContext !== null &&
-      'track_window' in state.playbackContext &&
-      'current_track' in state.playbackContext.track_window &&
-      'name' in state.playbackContext.track_window.current_track &&
-      'artists' in state.playbackContext.track_window.current_track &&
-      'album' in state.playbackContext.track_window.current_track);
-  }
 };
 
 const mutations = {
@@ -34,6 +28,7 @@ const mutations = {
   },
   setPlaybackContext(state, playback) {
     state.playbackContext = playback;
+    state.track = playback.track_window.current_track;
   },
 };
 
@@ -73,7 +68,6 @@ const actions = {
       const player = new Player({
         name: 'Boid Boogie',
         getOAuthToken: (cb) => {
-          console.log(token);
           cb(token);
         }
       });
