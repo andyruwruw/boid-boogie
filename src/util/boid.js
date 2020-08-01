@@ -45,6 +45,9 @@ Boid.prototype = {
     let steering = sketch.createVector();
     let total = 0;
     for (let other of boids) {
+      if ('type' in other && other.type === 'mouse') {
+        continue;
+      }
       let d = sketch.dist(this.position.x, this.position.y, other.position.x, other.position.y);
       if (other != this && d < perceptionRadius) {
         steering.add(other.velocity.x, other.velocity.y, other.velocity.z);
@@ -69,6 +72,9 @@ Boid.prototype = {
       if (other != this && d < perceptionRadius) {
         let diff = window.p5.Vector.sub(this.position, other.position);
         diff.div(d * d);
+        if ('type' in other && other.type === 'mouse') {
+          diff.mult(100);
+        }
         steering.add(diff);
         total++;
       }
@@ -87,10 +93,15 @@ Boid.prototype = {
     let steering = sketch.createVector();
     let total = 0;
     for (let other of boids) {
-      let d = sketch.dist(this.position.x, this.position.y, other.position.x, other.position.y);
-      if (other != this && d < perceptionRadius) {
-        steering.add(other.position);
-        total++;
+      if ('type' in other && other.type === 'mouse') {
+        continue;
+      }
+      if (other != this) {
+        let d = sketch.dist(this.position.x, this.position.y, other.position.x, other.position.y);
+        if (d < perceptionRadius) {
+          steering.add(other.position);
+          total++;
+        }
       }
     }
     
@@ -124,7 +135,7 @@ Boid.prototype = {
         this.resetCustomModifiers();
         return;
       case 100:
-        //this.backAndForth(sketch, width, height);
+        this.backAndForth(sketch, width, height);
         this.resetCustomModifiers();
         return
       case 2: 
@@ -241,7 +252,7 @@ Boid.prototype = {
         break;
       }
       default: {
-        sketch.strokeWeight(10);
+        sketch.strokeWeight(12);
         sketch.point(this.position.x, this.position.y);
         break;
       } 

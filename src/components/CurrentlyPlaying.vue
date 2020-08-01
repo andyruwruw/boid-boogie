@@ -57,6 +57,8 @@ export default {
 
 .component img {
   width: 6rem;
+  border-radius: 6px;
+  box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.233);
 }
 
 .details {
@@ -66,9 +68,12 @@ export default {
 .details .title {
   font-size: 1.5rem;
   margin: 0;
+  text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.932);
 }
 
 .details .artists {
   margin: 0;
+  text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.932);
+  color: rgba(255, 255, 255, 0.685);
 }
 </style>

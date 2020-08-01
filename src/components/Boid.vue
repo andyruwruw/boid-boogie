@@ -42,7 +42,7 @@ export default {
     
     perception: 200,
     alignment: 1,
-    cohesion: 1.5,
+    cohesion: 1.6,
     separationModifier: 0,
 
     maxForce: .2,
@@ -168,12 +168,17 @@ export default {
       }
     },
     generateQuadTree(sketch) {
-      let quadTree = new QuadTree(this.boundary, 4, this.quadTree);
+      const quadTree = new QuadTree(this.boundary, 4, this.quadTree);
 
       for (let i = 0; i < this.boids.length; i++) {
         let point = new Point(this.boids[i].x, this.boids[i].y, this.boids[i]);
         quadTree.insert(point, sketch);
       }
+      const mouse = new Boid(sketch, sketch.mouseX, sketch.mouseY, 0, 0, 0, 0, 0, 0, 0);
+      mouse.type = 'mouse';
+      const mousePoint = new Point(sketch.mouseX, sketch.mouseY, mouse);
+      quadTree.insert(mousePoint, sketch);
+
       return quadTree;
     },
     updateParameters() {
@@ -208,6 +213,11 @@ export default {
         boid.update(sketch);
         boid.show(sketch, this.hue, this.style);
       }
+
+      if (sketch.mouseX !== 0 && sketch.mouseY !== 0) {
+        let radius = new Circle(sketch.mouseX, sketch.mouseY, 75);
+        radius.show(sketch, 3, highlight);
+      }
     },
     getColor() {
       let alpha;
@@ -229,28 +239,26 @@ export default {
   },
   watch: {
     activeSection(val) {
-      switch (val.index % 5) {
-        case 0:
-          this.hue = 292;
-          break;
-        case 1:
-          this.hue = 193;
-          break;
-        case 2:
-          this.hue = 122;
-          break;
-        case 3:
-          this.hue = 39;
-          break;
-        default:
-          this.hue = 0;
-          break;
+      if (val && 'index' in val) {
+        switch (val.index % 5) {
+          case 0:
+            this.hue = 292;
+            break;
+          case 1:
+            this.hue = 193;
+            break;
+          case 2:
+            this.hue = 122;
+            break;
+          case 3:
+            this.hue = 39;
+            break;
+          default:
+            this.hue = 0;
+            break;
+        }
       }
     },
-    // activeSegment(val) {
-    //   console.log(val);
-    //   //this.maxSpeed = ((val.loudness_max + 50) / 50 * 8) + 8;
-    // },
     boidNum(val) {
       if (this.boids.length > val) {
         this.destroyBoids();
