@@ -67,7 +67,7 @@
 export default {
   name: 'Settings',
   data: () => ({
-    styles: ['Triangle', 'Dot', 'Fish'],
+    styles: ['Triangle', 'Dot', 'Hidden'],
   }),
   computed: {
     circles: {

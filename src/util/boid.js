@@ -251,6 +251,9 @@ Boid.prototype = {
         );
         break;
       }
+      case 'Hidden': {
+        break;
+      }
       default: {
         sketch.strokeWeight(12);
         sketch.point(this.position.x, this.position.y);
