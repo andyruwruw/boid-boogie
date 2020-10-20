@@ -12,6 +12,8 @@ Boid boogie is a flocking simulation that uses [Spotify's API](https://developer
 
 Largly inspired by [Kaleidosync](https://www.kaleidosync.com/visualizer) by Zachary Winter. If you like this, you'll love his application.
 
+<img src="https://raw.githubusercontent.com/andyruwruw/boid-boogie/master/documentation/boids.PNG" />
+
 # How it works
 
 ### Flocking Simulation
